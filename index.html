@@ -1,227 +1,200 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>EazeEarn Payment</title>
-  <style>
-    body {
-      font-family: "Segoe UI", Arial, sans-serif;
-      margin: 0;
-      background: linear-gradient(135deg, #0a0a0f, #1c1c2a);
-      color: #fff;
-    }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>💸 EazeEarn Payments</title>
+<style>
+  /* Fonts & base */
+  body {
+    margin: 0;
+    font-family: "Segoe UI", Arial, sans-serif;
+    color: #eee;
+    overflow-x: hidden;
+    background: #111;
+  }
 
-    /* Header */
-    header {
-      background: linear-gradient(135deg, #0f0f1f, #05050c);
-      padding: 18px;
-      text-align: center;
-      color: #00fff7;
-      font-size: 24px;
-      font-weight: bold;
-      letter-spacing: 1px;
-      text-shadow: 0 0 12px #00fff7, 0 0 20px #00fff7;
-    }
+  /* Animated 3D background shapes */
+  body::before, body::after {
+    content: "";
+    position: fixed;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle at center, rgba(255,255,255,0.05), transparent 70%);
+    z-index: -2;
+    animation: rotateBG 60s linear infinite;
+  }
 
-    /* Screens */
-    .screen {
-      display: none;
-      padding: 20px;
-      text-align: center;
-      animation: fadeIn 0.4s ease;
-    }
-    .active { display: block; }
+  body::after {
+    background: radial-gradient(circle at center, rgba(255,255,255,0.03), transparent 70%);
+    animation-duration: 120s;
+  }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
+  @keyframes rotateBG {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
 
-    h2 {
-      margin-bottom: 20px;
-      color: #00fff7;
-      text-shadow: 0 0 10px #00fff7;
-    }
+  /* Header */
+  header {
+    background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
+    padding: 18px 0;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    color: #fff;
+    text-shadow: 0 2px 5px rgba(0,0,0,0.6);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+  }
 
-    /* Card buttons for plan & UPI selection */
-    .card-btn {
-      display: block;
-      margin: 14px auto;
-      padding: 20px;
-      border-radius: 20px;
-      font-size: 20px;
-      width: 85%;
-      max-width: 320px;
-      color: white;
-      cursor: pointer;
-      text-align: center;
-      transition: 0.3s;
-      box-shadow: 0 8px 20px rgba(0,255,255,0.2);
-      transform: translateZ(0);
-    }
-    .card-btn:hover { 
-      transform: translateY(-5px) scale(1.05);
-      box-shadow: 0 15px 40px rgba(0,255,255,0.5);
-    }
+  /* Screens */
+  .screen { display: none; padding: 20px; text-align: center; }
+  .active { display: block; animation: fadeIn 0.5s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity:1; transform: translateY(0); } }
 
-    /* Plan card gradients */
-    .plan-basic { background: linear-gradient(45deg,#28a745,#00ffa3); }
-    .plan-plus { background: linear-gradient(45deg,#ff00f7,#ff00c3); }
-    .plan-elite { background: linear-gradient(45deg,#ff0055,#ff9500); }
+  h2 { margin-bottom: 20px; }
 
-    /* UPI buttons */
-    .gpay { background: #4285F4; }
-    .phonepe { background: #6823FD; }
-    .paytm { background: #002970; }
-    .whatsapp { background: #25D366; }
+  /* Buttons */
+  .btn {
+    display: block;
+    margin: 14px auto;
+    padding: 16px;
+    border: none;
+    border-radius: 12px;
+    font-size: 18px;
+    width: 85%;
+    max-width: 320px;
+    color: #fff;
+    cursor: pointer;
+    text-align: center;
+    box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+    transition: all 0.3s ease;
+  }
 
-    /* Back button */
-    .back-btn {
-      margin-top: 20px;
-      background: #222;
-      color: #00fff7;
-      padding: 14px 24px;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      box-shadow: 0 6px 20px rgba(0,255,255,0.3);
-      transition: 0.3s;
-    }
-    .back-btn:hover { transform: scale(1.05); box-shadow: 0 12px 35px rgba(0,255,255,0.5); }
+  .btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 12px 20px rgba(0,0,0,0.45); }
 
-    /* QR screen */
-    .qr-container {
-      margin-top: 20px;
-      perspective: 900px;
-    }
-    #qrCard {
-      background: #111;
-      display: inline-block;
-      padding: 18px;
-      border-radius: 20px;
-      box-shadow: 0 10px 35px rgba(0,255,255,0.3);
-      transform: rotateY(0deg);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
+  .plan-basic { background: linear-gradient(135deg,#1abc9c,#16a085); }
+  .plan-plus { background: linear-gradient(135deg,#3498db,#2980b9); }
+  .plan-elite { background: linear-gradient(135deg,#9b59b6,#8e44ad); }
 
-    #upiId {
-      font-weight: bold;
-      font-size: 20px;
-      margin-top: 12px;
-      background: rgba(255,255,255,0.05);
-      padding: 14px;
-      border-radius: 14px;
-      box-shadow: 0 6px 18px rgba(0,255,255,0.3);
-      text-align: center;
-    }
+  .gpay { background: #4285F4; }
+  .phonepe { background: #6823FD; }
+  .paytm { background: #002970; }
+  .whatsapp { background: #25D366; }
 
-    .copy-btn {
-      margin-top: 18px;
-      padding: 16px;
-      width: 85%;
-      max-width: 320px;
-      font-size: 18px;
-      border: none;
-      border-radius: 16px;
-      cursor: pointer;
-      color: #fff;
-      background: linear-gradient(45deg,#00fff7,#00aaff);
-      box-shadow: 0 6px 20px rgba(0,255,255,0.5);
-      transition: 0.3s;
-    }
-    .copy-btn:hover { transform: scale(1.05); box-shadow: 0 12px 35px rgba(0,255,255,0.7); }
-  </style>
+  .back-btn {
+    margin-top: 20px;
+    background: #555;
+    color: white;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    box-shadow: 0 6px 12px rgba(0,0,0,0.4);
+  }
+
+  .qr-container { margin-top: 20px; }
+
+  #upiId {
+    font-weight: bold;
+    font-size: 18px;
+    margin-top: 10px;
+    color: #fff;
+  }
+
+</style>
 </head>
 <body>
-  <header>💸 EazeEarn Payments</header>
 
-  <!-- Screen 1: Plan Selection -->
-  <div class="screen active" id="planScreen">
-    <h2>Choose Your Plan</h2>
-    <button class="card-btn plan-basic" onclick="selectPlan('Basic',1499)">Basic – ₹1499</button>
-    <button class="card-btn plan-plus" onclick="selectPlan('Plus',4499)">Plus – ₹4499</button>
-    <button class="card-btn plan-elite" onclick="selectPlan('Elite',9500)">Elite – ₹9500</button>
+<header>💸 EazeEarn Payments</header>
+
+<!-- Screen 1: Plan Selection -->
+<div class="screen active" id="planScreen">
+  <h2>Select Your Plan</h2>
+  <button class="btn plan-basic" onclick="selectPlan('Basic',1499)">Basic – ₹1499</button>
+  <button class="btn plan-plus" onclick="selectPlan('Plus',4499)">Plus – ₹4499</button>
+  <button class="btn plan-elite" onclick="selectPlan('Elite',9500)">Elite – ₹9500</button>
+</div>
+
+<!-- Screen 2: App Selection -->
+<div class="screen" id="appScreen">
+  <h2>Choose UPI App</h2>
+  <button class="btn gpay" onclick="payNow('gpay')">Google Pay</button>
+  <button class="btn phonepe" onclick="payNow('phonepe')">PhonePe</button>
+  <button class="btn paytm" onclick="payNow('paytm')">Paytm</button>
+  <button class="btn whatsapp" onclick="payNow('upi')">Other UPI App</button>
+  <br>
+  <button class="back-btn" onclick="goBack()">⬅ Back</button>
+</div>
+
+<!-- Screen 3: QR Fallback -->
+<div class="screen" id="qrScreen">
+  <h2>Scan & Pay</h2>
+  <p>If your UPI app didn’t open, scan this QR code:</p>
+  <div class="qr-container">
+    <img id="qrCode" src="" alt="UPI QR Code" width="220"/>
   </div>
+  <p>Or pay manually using this UPI ID:</p>
+  <p id="upiId"></p>
+  <button class="back-btn" onclick="goBackToApps()">⬅ Back</button>
+  <button class="btn plan-basic" onclick="copyUpi()">📋 Copy UPI ID</button>
+</div>
 
-  <!-- Screen 2: App Selection -->
-  <div class="screen" id="appScreen">
-    <h2>Select UPI App</h2>
-    <button class="card-btn gpay" onclick="payNow('gpay')">Google Pay</button>
-    <button class="card-btn phonepe" onclick="payNow('phonepe')">PhonePe</button>
-    <button class="card-btn paytm" onclick="payNow('paytm')">Paytm</button>
-    <button class="card-btn whatsapp" onclick="payNow('upi')">Other UPI App</button>
-    <button class="back-btn" onclick="goBack()">⬅ Back</button>
-  </div>
+<script>
+  let selectedPlan = { name: "Basic", amount: 1499 };
+  const upiID = "8287978793@ptyes";
+  const payee = "DeepJadaun";
 
-  <!-- Screen 3: QR Fallback -->
-  <div class="screen" id="qrScreen">
-    <h2>Scan & Pay</h2>
-    <p>If the UPI app didn’t open, scan this QR code:</p>
-    <div class="qr-container">
-      <div id="qrCard">
-        <img id="qrCode" src="" alt="UPI QR Code" width="220" style="border-radius:15px;"/>
-      </div>
-    </div>
-    <p style="margin-top:15px;">Or pay manually using this UPI ID:</p>
-    <p id="upiId"></p>
-    <button class="back-btn" onclick="goBackToApps()">⬅ Back</button>
-    <button class="copy-btn" onclick="copyUpi()">📋 Copy UPI ID</button>
-  </div>
+  function selectPlan(name, amount) {
+    selectedPlan = { name, amount };
+    document.getElementById("planScreen").classList.remove("active");
+    document.getElementById("appScreen").classList.add("active");
+  }
 
-  <script>
-    let selectedPlan = { name: "Basic", amount: 1499 };
-    const upiID = "8287978793@ptyes";
-    const payee = "DeepJadaun";
+  function goBack() {
+    document.getElementById("appScreen").classList.remove("active");
+    document.getElementById("planScreen").classList.add("active");
+  }
 
-    function selectPlan(name, amount) {
-      selectedPlan = { name, amount };
-      document.getElementById("planScreen").classList.remove("active");
-      document.getElementById("appScreen").classList.add("active");
-    }
+  function goBackToApps() {
+    document.getElementById("qrScreen").classList.remove("active");
+    document.getElementById("appScreen").classList.add("active");
+  }
 
-    function goBack() {
-      document.getElementById("appScreen").classList.remove("active");
-      document.getElementById("planScreen").classList.add("active");
-    }
+  function payNow(app) {
+    const amount = selectedPlan.amount;
+    const note = selectedPlan.name + " Activation";
+    let link = "";
 
-    function goBackToApps() {
-      document.getElementById("qrScreen").classList.remove("active");
-      document.getElementById("appScreen").classList.add("active");
-    }
+    if(app === "gpay") link = `tez://upi/pay?pa=${upiID}&pn=${payee}&am=${amount}&cu=INR&tn=${note}`;
+    else if(app === "phonepe") link = `phonepe://upi/pay?pa=${upiID}&pn=${payee}&am=${amount}&cu=INR&tn=${note}`;
+    else if(app === "paytm") link = `paytm://upi/pay?pa=${upiID}&pn=${payee}&am=${amount}&cu=INR&tn=${note}`;
+    else link = `upi://pay?pa=${upiID}&pn=${payee}&am=${amount}&cu=INR&tn=${note}`;
 
-    function payNow(app) {
-      const amount = selectedPlan.amount;
-      const note = selectedPlan.name + " Activation";
-      let link = "";
+    window.location.href = link;
 
-      if(app === "gpay") {
-        link = `tez://upi/pay?pa=${upiID}&pn=${payee}&am=${amount}&cu=INR&tn=${note}`;
-      } else if(app === "phonepe") {
-        link = `phonepe://upi/pay?pa=${upiID}&pn=${payee}&am=${amount}&cu=INR&tn=${note}`;
-      } else if(app === "paytm") {
-        link = `paytm://upi/pay?pa=${upiID}&pn=${payee}&am=${amount}&cu=INR&tn=${note}`;
-      } else {
-        link = `upi://pay?pa=${upiID}&pn=${payee}&am=${amount}&cu=INR&tn=${note}`;
-      }
+    // Fallback QR
+    setTimeout(() => { showQR(link); }, 1500);
+  }
 
-      window.location.href = link;
-      setTimeout(() => { showQR(link); }, 1500);
-    }
+  function showQR(link) {
+    document.getElementById("appScreen").classList.remove("active");
+    document.getElementById("qrScreen").classList.add("active");
 
-    function showQR(link) {
-      document.getElementById("appScreen").classList.remove("active");
-      document.getElementById("qrScreen").classList.add("active");
-      const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(link)}`;
-      document.getElementById("qrCode").src = qrApi;
-      document.getElementById("upiId").innerText = upiID;
-    }
+    const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(link)}`;
+    document.getElementById("qrCode").src = qrApi;
+    document.getElementById("upiId").innerText = upiID;
+  }
 
-    function copyUpi() {
-      navigator.clipboard.writeText(upiID).then(() => {
-        alert("✅ UPI ID copied to clipboard!");
-      });
-    }
-  </script>
+  function copyUpi() {
+    navigator.clipboard.writeText(upiID).then(() => {
+      alert("✅ UPI ID copied to clipboard!");
+    });
+  }
+</script>
+
 </body>
 </html>
