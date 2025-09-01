@@ -3,113 +3,167 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Pay ₹999 - Select UPI App</title>
+  <title>ZyncPay - Payment</title>
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background: linear-gradient(135deg, #4facfe, #00f2fe);
       margin: 0;
-      background: #f2f2f2;
+      color: #333;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
     }
 
-    .sheet {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: white;
-      border-radius: 12px 12px 0 0;
-      box-shadow: 0 -2px 8px rgba(0,0,0,0.1);
-      padding: 20px;
-      animation: slideUp 0.3s ease-out;
+    .container {
+      background: #fff;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      width: 90%;
+      max-width: 420px;
+      text-align: center;
+      animation: fadeIn 0.5s ease;
     }
 
-    @keyframes slideUp {
-      from { transform: translateY(100%); }
-      to { transform: translateY(0); }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     h2 {
-      margin-top: 0;
-      text-align: center;
-      font-size: 18px;
+      margin-bottom: 20px;
+      color: #222;
+    }
+
+    .step {
+      display: none;
+    }
+    .step.active {
+      display: block;
+    }
+
+    .plans, .apps {
+      display: grid;
+      gap: 15px;
+    }
+
+    .card {
+      border: 2px solid #eee;
+      padding: 15px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+    .card:hover {
+      border-color: #4facfe;
+      transform: scale(1.05);
+    }
+    .card.selected {
+      border-color: #4facfe;
+      background: #f0faff;
     }
 
     .btn {
-      display: block;
-      margin: 10px auto;
+      margin-top: 20px;
       padding: 12px;
       border: none;
       border-radius: 8px;
       font-size: 16px;
-      width: 90%;
-      color: white;
+      width: 100%;
+      background: #4facfe;
+      color: #fff;
       cursor: pointer;
-      text-align: center;
-      text-decoration: none;
+      transition: 0.3s;
     }
-
-    .gpay { background: #4285F4; }
-    .phonepe { background: #6823FD; }
-    .paytm { background: #002970; }
-    .whatsapp { background: #25D366; }
-
-    .fallback {
-      text-align: center;
-      margin-top: 20px;
-      font-size: 14px;
+    .btn:hover {
+      background: #00c6ff;
     }
 
     .upi-id-box {
-      background: #f0f0f0;
+      margin-top: 15px;
+      background: #f9f9f9;
       padding: 10px;
-      margin: 8px auto;
       border-radius: 8px;
-      width: 90%;
-      font-size: 16px;
       user-select: all;
+      font-weight: bold;
     }
 
-    .copy-btn {
-      margin-top: 10px;
-      padding: 8px 16px;
-      background: #333;
-      color: #fff;
-      border: none;
-      border-radius: 6px;
-      cursor: pointer;
-    }
-
-    .copy-btn:active {
-      background: #111;
-    }
-
-    img {
-      margin-top: 10px;
-      border-radius: 8px;
+    .qr {
+      margin-top: 15px;
     }
   </style>
 </head>
 <body>
+  <div class="container">
+    <!-- Step 1 -->
+    <div class="step active" id="step1">
+      <h2>Choose a Plan</h2>
+      <div class="plans">
+        <div class="card" onclick="selectPlan('Basic',1499)">💠 Basic - ₹1499</div>
+        <div class="card" onclick="selectPlan('Plus',4499)">✨ Plus - ₹4499</div>
+        <div class="card" onclick="selectPlan('Elite',9500)">👑 Elite - ₹9500</div>
+      </div>
+      <button class="btn" onclick="nextStep(2)">Next</button>
+    </div>
 
-  <div class="sheet">
-    <h2>💳 Pay ₹999 - Choose Your UPI App</h2>
+    <!-- Step 2 -->
+    <div class="step" id="step2">
+      <h2>Select UPI App</h2>
+      <div class="apps">
+        <div class="card" onclick="selectApp('gpay')">Google Pay</div>
+        <div class="card" onclick="selectApp('phonepe')">PhonePe</div>
+        <div class="card" onclick="selectApp('paytm')">Paytm</div>
+        <div class="card" onclick="selectApp('whatsapp')">WhatsApp / Others</div>
+      </div>
+      <button class="btn" onclick="nextStep(3)">Next</button>
+    </div>
 
-    <a class="btn gpay" href="upi://pay?pa=8287978793@ptyes&pn=DeepJadaun&am=999&cu=INR&tn=Account+Activation">Google Pay (GPay)</a>
-    <a class="btn phonepe" href="upi://pay?pa=8287978793@ptyes&pn=DeepJadaun&am=999&cu=INR&tn=Account+Activation">PhonePe</a>
-    <a class="btn paytm" href="upi://pay?pa=8287978793@ptyes&pn=DeepJadaun&am=999&cu=INR&tn=Account+Activation">Paytm</a>
-    <a class="btn whatsapp" href="upi://pay?pa=8287978793@ptyes&pn=DeepJadaun&am=999&cu=INR&tn=Account+Activation">WhatsApp / Other</a>
-
-    <div class="fallback">
-      <p>📎 Or pay manually using this UPI ID:</p>
+    <!-- Step 3 -->
+    <div class="step" id="step3">
+      <h2>Complete Payment</h2>
+      <p id="summary"></p>
+      <a id="payLink" class="btn" href="#" target="_blank">Pay Now</a>
       <div class="upi-id-box" id="upiText">8287978793@ptyes</div>
-      <button class="copy-btn" onclick="copyUPI()">📋 Copy UPI ID</button>
-
-      <p>📷 Or scan this QR code in any UPI app:</p>
-      <img src="https://api.qrserver.com/v1/create-qr-code/?data=upi://pay?pa=8287978793@ptyes&pn=DeepJadaun&am=999&cu=INR&tn=Account+Activation&size=200x200" alt="UPI QR" width="150"/>
+      <button class="btn" onclick="copyUPI()">📋 Copy UPI ID</button>
+      <div class="qr">
+        <img id="qrCode" src="" width="150"/>
+      </div>
     </div>
   </div>
 
   <script>
+    let selectedPlan = { name: "Basic", amount: 1499 };
+    let selectedApp = "gpay";
+
+    function selectPlan(name, amount) {
+      selectedPlan = { name, amount };
+      document.querySelectorAll('.plans .card').forEach(c => c.classList.remove('selected'));
+      event.target.classList.add('selected');
+    }
+
+    function selectApp(app) {
+      selectedApp = app;
+      document.querySelectorAll('.apps .card').forEach(c => c.classList.remove('selected'));
+      event.target.classList.add('selected');
+    }
+
+    function nextStep(step) {
+      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+      document.getElementById(`step${step}`).classList.add('active');
+
+      if (step === 3) {
+        const upiLink = `upi://pay?pa=8287978793@ptyes&pn=DeepJadaun&am=${selectedPlan.amount}&cu=INR&tn=${selectedPlan.name}+Activation`;
+        document.getElementById("summary").innerText = `Plan: ${selectedPlan.name} (₹${selectedPlan.amount})`;
+        document.getElementById("payLink").href = upiLink;
+        document.getElementById("qrCode").src = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(upiLink)}&size=200x200`;
+
+        // Auto open UPI link
+        window.location.href = upiLink;
+      }
+    }
+
     function copyUPI() {
       const upiID = document.getElementById("upiText").innerText;
       navigator.clipboard.writeText(upiID).then(() => {
@@ -117,6 +171,5 @@
       });
     }
   </script>
-
 </body>
 </html>
