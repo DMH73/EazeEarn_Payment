@@ -3,51 +3,39 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>EazeEarn - Payment</title>
+  <title>EazeEarn Payment</title>
   <style>
     body {
       font-family: "Segoe UI", Arial, sans-serif;
       margin: 0;
-      background: #f2f2f2;
-    }
-
-    .brand {
-      text-align: center;
-      font-size: 26px;
-      font-weight: 800;
-      letter-spacing: 1px;
-      margin-bottom: 12px;
-      background: linear-gradient(90deg, #007bff, #28a745, #ff5722);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-    }
-
-    .sheet {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: white;
-      border-radius: 16px 16px 0 0;
-      box-shadow: 0 -4px 10px rgba(0,0,0,0.15);
-      padding: 20px;
-      min-height: 50vh;
-      opacity: 0;
-      transform: translateY(100%);
-      transition: all 0.4s ease;
-    }
-
-    .sheet.active {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    h2 {
-      margin-top: 0;
-      text-align: center;
-      font-size: 20px;
+      background: #f8f9fa;
       color: #333;
     }
+
+    header {
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+      padding: 16px;
+      text-align: center;
+      color: white;
+      font-size: 20px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .screen {
+      display: none;
+      padding: 20px;
+      animation: fadeIn 0.4s ease;
+      text-align: center;
+    }
+    .active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    h2 { margin-bottom: 16px; }
 
     .btn {
       display: block;
@@ -56,146 +44,139 @@
       border: none;
       border-radius: 10px;
       font-size: 16px;
-      width: 90%;
+      width: 85%;
+      max-width: 320px;
       color: white;
       cursor: pointer;
       text-align: center;
-      text-decoration: none;
-      font-weight: 600;
-      transition: transform 0.15s;
+      transition: 0.25s;
     }
+    .btn:hover { transform: scale(1.04); }
 
-    .btn:active { transform: scale(0.97); }
-
-    .basic { background: #007bff; }
-    .plus { background: #28a745; }
-    .elite { background: #ff5722; }
-
-    .upi-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      margin: 10px auto;
-      padding: 12px;
-      border: none;
-      border-radius: 10px;
-      font-size: 16px;
-      width: 90%;
-      color: white;
-      cursor: pointer;
-      text-align: center;
-      text-decoration: none;
-      font-weight: 600;
-      transition: transform 0.15s;
-    }
-
-    .upi-btn:active { transform: scale(0.97); }
+    .plan-basic { background: #28a745; }
+    .plan-plus { background: #ff9800; }
+    .plan-elite { background: #9c27b0; }
 
     .gpay { background: #4285F4; }
     .phonepe { background: #6823FD; }
     .paytm { background: #002970; }
     .whatsapp { background: #25D366; }
 
-    .fallback {
-      text-align: center;
+    .back-btn {
       margin-top: 20px;
-      font-size: 14px;
-    }
-
-    .upi-id-box {
-      background: #f7f7f7;
-      padding: 10px;
-      margin: 8px auto;
-      border-radius: 8px;
-      width: 90%;
-      font-size: 16px;
-      font-weight: 500;
-      user-select: all;
-    }
-
-    .copy-btn {
-      margin-top: 10px;
-      padding: 8px 16px;
-      background: #333;
-      color: #fff;
+      background: #555;
+      color: white;
+      padding: 10px 20px;
       border: none;
-      border-radius: 6px;
+      border-radius: 8px;
       cursor: pointer;
-      font-weight: 500;
     }
 
-    .copy-btn:active { background: #111; }
+    .qr-container {
+      margin-top: 20px;
+    }
 
-    img.qr {
+    #upiId {
+      font-weight: bold;
+      font-size: 18px;
       margin-top: 10px;
-      border-radius: 8px;
     }
   </style>
 </head>
 <body>
+  <header>💸 EazeEarn Payments</header>
 
   <!-- Screen 1: Plan Selection -->
-  <div class="sheet active" id="planScreen">
-    <div class="brand">EazeEarn</div>
-    <h2>🛒 Choose Your Plan</h2>
-    <button class="btn basic" onclick="selectPlan(1499,'Basic')">Basic - ₹1499</button>
-    <button class="btn plus" onclick="selectPlan(4499,'Plus')">Plus - ₹4499</button>
-    <button class="btn elite" onclick="selectPlan(9500,'Elite')">Elite - ₹9500</button>
+  <div class="screen active" id="planScreen">
+    <h2>Choose Your Plan</h2>
+    <button class="btn plan-basic" onclick="selectPlan('Basic',1499)">Basic – ₹1499</button>
+    <button class="btn plan-plus" onclick="selectPlan('Plus',4499)">Plus – ₹4499</button>
+    <button class="btn plan-elite" onclick="selectPlan('Elite',9500)">Elite – ₹9500</button>
   </div>
 
-  <!-- Screen 2: Payment Selection -->
-  <div class="sheet" id="paymentScreen">
-    <div class="brand">EazeEarn</div>
-    <h2 id="payTitle">💳 Pay - Choose UPI App</h2>
+  <!-- Screen 2: App Selection -->
+  <div class="screen" id="appScreen">
+    <h2>Select UPI App</h2>
+    <button class="btn gpay" onclick="payNow('gpay')">Google Pay</button>
+    <button class="btn phonepe" onclick="payNow('phonepe')">PhonePe</button>
+    <button class="btn paytm" onclick="payNow('paytm')">Paytm</button>
+    <button class="btn whatsapp" onclick="payNow('upi')">Other UPI App</button>
+    <br>
+    <button class="back-btn" onclick="goBack()">⬅ Back</button>
+  </div>
 
-    <a class="upi-btn gpay" id="gpayLink">Google Pay</a>
-    <a class="upi-btn phonepe" id="phonepeLink">PhonePe</a>
-    <a class="upi-btn paytm" id="paytmLink">Paytm</a>
-    <a class="upi-btn whatsapp" id="whatsappLink">WhatsApp / Other</a>
-
-    <div class="fallback">
-      <p>📎 Or pay manually using this UPI ID:</p>
-      <div class="upi-id-box" id="upiText">8287978793@ptyes</div>
-      <button class="copy-btn" onclick="copyUPI()">📋 Copy UPI ID</button>
-
-      <p>📷 Or scan this QR code in any UPI app:</p>
-      <img class="qr" id="qrCode" src="" alt="UPI QR" width="150"/>
+  <!-- Screen 3: QR Fallback -->
+  <div class="screen" id="qrScreen">
+    <h2>Scan & Pay</h2>
+    <p>If the UPI app didn’t open, scan this QR code:</p>
+    <div class="qr-container">
+      <img id="qrCode" src="" alt="UPI QR Code" width="220"/>
     </div>
+    <p>Or pay manually using this UPI ID:</p>
+    <p id="upiId"></p>
+    <button class="back-btn" onclick="goBackToApps()">⬅ Back</button>
+    <button class="btn plan-basic" onclick="copyUpi()">📋 Copy UPI ID</button>
   </div>
 
   <script>
-    function selectPlan(amount, planName) {
-      // Hide plan screen with animation
-      const plan = document.getElementById("planScreen");
-      const pay = document.getElementById("paymentScreen");
+    let selectedPlan = { name: "Basic", amount: 1499 };
+    const upiID = "8287978793@ptyes";
+    const payee = "DeepJadaun";
 
-      plan.classList.remove("active");
-      setTimeout(() => {
-        plan.style.display = "none";
-        pay.style.display = "block";
-        setTimeout(() => pay.classList.add("active"), 50);
-      }, 400);
-
-      // Update payment details
-      document.getElementById("payTitle").innerText = `💳 Pay ₹${amount} for ${planName} Plan`;
-      let upiBase = `upi://pay?pa=8287978793@ptyes&pn=DeepJadaun&am=${amount}&cu=INR&tn=${planName}+Activation`;
-
-      document.getElementById("gpayLink").href = upiBase;
-      document.getElementById("phonepeLink").href = upiBase;
-      document.getElementById("paytmLink").href = upiBase;
-      document.getElementById("whatsappLink").href = upiBase;
-
-      document.getElementById("qrCode").src = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(upiBase)}&size=200x200`;
+    function selectPlan(name, amount) {
+      selectedPlan = { name, amount };
+      document.getElementById("planScreen").classList.remove("active");
+      document.getElementById("appScreen").classList.add("active");
     }
 
-    function copyUPI() {
-      const upiID = document.getElementById("upiText").innerText;
+    function goBack() {
+      document.getElementById("appScreen").classList.remove("active");
+      document.getElementById("planScreen").classList.add("active");
+    }
+
+    function goBackToApps() {
+      document.getElementById("qrScreen").classList.remove("active");
+      document.getElementById("appScreen").classList.add("active");
+    }
+
+    function payNow(app) {
+      const amount = selectedPlan.amount;
+      const note = selectedPlan.name + " Activation";
+      let link = "";
+
+      if(app === "gpay") {
+        link = `tez://upi/pay?pa=${upiID}&pn=${payee}&am=${amount}&cu=INR&tn=${note}`;
+      } else if(app === "phonepe") {
+        link = `phonepe://upi/pay?pa=${upiID}&pn=${payee}&am=${amount}&cu=INR&tn=${note}`;
+      } else if(app === "paytm") {
+        link = `paytm://upi/pay?pa=${upiID}&pn=${payee}&am=${amount}&cu=INR&tn=${note}`;
+      } else {
+        link = `upi://pay?pa=${upiID}&pn=${payee}&am=${amount}&cu=INR&tn=${note}`;
+      }
+
+      // Try to open app
+      window.location.href = link;
+
+      // Show QR after short delay as fallback
+      setTimeout(() => {
+        showQR(link);
+      }, 1500);
+    }
+
+    function showQR(link) {
+      document.getElementById("appScreen").classList.remove("active");
+      document.getElementById("qrScreen").classList.add("active");
+
+      const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(link)}`;
+      document.getElementById("qrCode").src = qrApi;
+      document.getElementById("upiId").innerText = upiID;
+    }
+
+    function copyUpi() {
       navigator.clipboard.writeText(upiID).then(() => {
-        alert("✅ UPI ID copied to clipboard");
+        alert("✅ UPI ID copied to clipboard!");
       });
     }
   </script>
-
 </body>
 </html>
