@@ -3,165 +3,190 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ZyncPay - Payment</title>
+  <title>EazeEarn - Payment</title>
   <style>
     body {
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-      background: linear-gradient(135deg, #4facfe, #00f2fe);
+      font-family: "Segoe UI", Arial, sans-serif;
       margin: 0;
-      color: #333;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
+      background: #f2f2f2;
     }
 
-    .container {
-      background: #fff;
-      border-radius: 16px;
-      padding: 30px;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-      width: 90%;
-      max-width: 420px;
+    .brand {
       text-align: center;
-      animation: fadeIn 0.5s ease;
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+      background: linear-gradient(90deg, #007bff, #28a745, #ff5722);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
+    .sheet {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: white;
+      border-radius: 16px 16px 0 0;
+      box-shadow: 0 -4px 10px rgba(0,0,0,0.15);
+      padding: 20px;
+      min-height: 50vh;
+      opacity: 0;
+      transform: translateY(100%);
+      transition: all 0.4s ease;
+    }
+
+    .sheet.active {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     h2 {
-      margin-bottom: 20px;
-      color: #222;
-    }
-
-    .step {
-      display: none;
-    }
-    .step.active {
-      display: block;
-    }
-
-    .plans, .apps {
-      display: grid;
-      gap: 15px;
-    }
-
-    .card {
-      border: 2px solid #eee;
-      padding: 15px;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: 0.3s;
-    }
-    .card:hover {
-      border-color: #4facfe;
-      transform: scale(1.05);
-    }
-    .card.selected {
-      border-color: #4facfe;
-      background: #f0faff;
+      margin-top: 0;
+      text-align: center;
+      font-size: 20px;
+      color: #333;
     }
 
     .btn {
-      margin-top: 20px;
+      display: block;
+      margin: 12px auto;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      width: 90%;
+      color: white;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      font-weight: 600;
+      transition: transform 0.15s;
+    }
+
+    .btn:active { transform: scale(0.97); }
+
+    .basic { background: #007bff; }
+    .plus { background: #28a745; }
+    .elite { background: #ff5722; }
+
+    .upi-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin: 10px auto;
       padding: 12px;
       border: none;
-      border-radius: 8px;
+      border-radius: 10px;
       font-size: 16px;
-      width: 100%;
-      background: #4facfe;
-      color: #fff;
+      width: 90%;
+      color: white;
       cursor: pointer;
-      transition: 0.3s;
+      text-align: center;
+      text-decoration: none;
+      font-weight: 600;
+      transition: transform 0.15s;
     }
-    .btn:hover {
-      background: #00c6ff;
+
+    .upi-btn:active { transform: scale(0.97); }
+
+    .gpay { background: #4285F4; }
+    .phonepe { background: #6823FD; }
+    .paytm { background: #002970; }
+    .whatsapp { background: #25D366; }
+
+    .fallback {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 14px;
     }
 
     .upi-id-box {
-      margin-top: 15px;
-      background: #f9f9f9;
+      background: #f7f7f7;
       padding: 10px;
+      margin: 8px auto;
       border-radius: 8px;
+      width: 90%;
+      font-size: 16px;
+      font-weight: 500;
       user-select: all;
-      font-weight: bold;
     }
 
-    .qr {
-      margin-top: 15px;
+    .copy-btn {
+      margin-top: 10px;
+      padding: 8px 16px;
+      background: #333;
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 500;
+    }
+
+    .copy-btn:active { background: #111; }
+
+    img.qr {
+      margin-top: 10px;
+      border-radius: 8px;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <!-- Step 1 -->
-    <div class="step active" id="step1">
-      <h2>Choose a Plan</h2>
-      <div class="plans">
-        <div class="card" onclick="selectPlan('Basic',1499)">💠 Basic - ₹1499</div>
-        <div class="card" onclick="selectPlan('Plus',4499)">✨ Plus - ₹4499</div>
-        <div class="card" onclick="selectPlan('Elite',9500)">👑 Elite - ₹9500</div>
-      </div>
-      <button class="btn" onclick="nextStep(2)">Next</button>
-    </div>
 
-    <!-- Step 2 -->
-    <div class="step" id="step2">
-      <h2>Select UPI App</h2>
-      <div class="apps">
-        <div class="card" onclick="selectApp('gpay')">Google Pay</div>
-        <div class="card" onclick="selectApp('phonepe')">PhonePe</div>
-        <div class="card" onclick="selectApp('paytm')">Paytm</div>
-        <div class="card" onclick="selectApp('whatsapp')">WhatsApp / Others</div>
-      </div>
-      <button class="btn" onclick="nextStep(3)">Next</button>
-    </div>
+  <!-- Screen 1: Plan Selection -->
+  <div class="sheet active" id="planScreen">
+    <div class="brand">EazeEarn</div>
+    <h2>🛒 Choose Your Plan</h2>
+    <button class="btn basic" onclick="selectPlan(1499,'Basic')">Basic - ₹1499</button>
+    <button class="btn plus" onclick="selectPlan(4499,'Plus')">Plus - ₹4499</button>
+    <button class="btn elite" onclick="selectPlan(9500,'Elite')">Elite - ₹9500</button>
+  </div>
 
-    <!-- Step 3 -->
-    <div class="step" id="step3">
-      <h2>Complete Payment</h2>
-      <p id="summary"></p>
-      <a id="payLink" class="btn" href="#" target="_blank">Pay Now</a>
+  <!-- Screen 2: Payment Selection -->
+  <div class="sheet" id="paymentScreen">
+    <div class="brand">EazeEarn</div>
+    <h2 id="payTitle">💳 Pay - Choose UPI App</h2>
+
+    <a class="upi-btn gpay" id="gpayLink">Google Pay</a>
+    <a class="upi-btn phonepe" id="phonepeLink">PhonePe</a>
+    <a class="upi-btn paytm" id="paytmLink">Paytm</a>
+    <a class="upi-btn whatsapp" id="whatsappLink">WhatsApp / Other</a>
+
+    <div class="fallback">
+      <p>📎 Or pay manually using this UPI ID:</p>
       <div class="upi-id-box" id="upiText">8287978793@ptyes</div>
-      <button class="btn" onclick="copyUPI()">📋 Copy UPI ID</button>
-      <div class="qr">
-        <img id="qrCode" src="" width="150"/>
-      </div>
+      <button class="copy-btn" onclick="copyUPI()">📋 Copy UPI ID</button>
+
+      <p>📷 Or scan this QR code in any UPI app:</p>
+      <img class="qr" id="qrCode" src="" alt="UPI QR" width="150"/>
     </div>
   </div>
 
   <script>
-    let selectedPlan = { name: "Basic", amount: 1499 };
-    let selectedApp = "gpay";
+    function selectPlan(amount, planName) {
+      // Hide plan screen with animation
+      const plan = document.getElementById("planScreen");
+      const pay = document.getElementById("paymentScreen");
 
-    function selectPlan(name, amount) {
-      selectedPlan = { name, amount };
-      document.querySelectorAll('.plans .card').forEach(c => c.classList.remove('selected'));
-      event.target.classList.add('selected');
-    }
+      plan.classList.remove("active");
+      setTimeout(() => {
+        plan.style.display = "none";
+        pay.style.display = "block";
+        setTimeout(() => pay.classList.add("active"), 50);
+      }, 400);
 
-    function selectApp(app) {
-      selectedApp = app;
-      document.querySelectorAll('.apps .card').forEach(c => c.classList.remove('selected'));
-      event.target.classList.add('selected');
-    }
+      // Update payment details
+      document.getElementById("payTitle").innerText = `💳 Pay ₹${amount} for ${planName} Plan`;
+      let upiBase = `upi://pay?pa=8287978793@ptyes&pn=DeepJadaun&am=${amount}&cu=INR&tn=${planName}+Activation`;
 
-    function nextStep(step) {
-      document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
-      document.getElementById(`step${step}`).classList.add('active');
+      document.getElementById("gpayLink").href = upiBase;
+      document.getElementById("phonepeLink").href = upiBase;
+      document.getElementById("paytmLink").href = upiBase;
+      document.getElementById("whatsappLink").href = upiBase;
 
-      if (step === 3) {
-        const upiLink = `upi://pay?pa=8287978793@ptyes&pn=DeepJadaun&am=${selectedPlan.amount}&cu=INR&tn=${selectedPlan.name}+Activation`;
-        document.getElementById("summary").innerText = `Plan: ${selectedPlan.name} (₹${selectedPlan.amount})`;
-        document.getElementById("payLink").href = upiLink;
-        document.getElementById("qrCode").src = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(upiLink)}&size=200x200`;
-
-        // Auto open UPI link
-        window.location.href = upiLink;
-      }
+      document.getElementById("qrCode").src = `https://api.qrserver.com/v1/create-qr-code/?data=${encodeURIComponent(upiBase)}&size=200x200`;
     }
 
     function copyUPI() {
@@ -171,5 +196,6 @@
       });
     }
   </script>
+
 </body>
 </html>
