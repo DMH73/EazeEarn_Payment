@@ -5,39 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>💸 EazeEarn Payments</title>
 <style>
-  /* Fonts & base */
   body {
     margin: 0;
     font-family: "Segoe UI", Arial, sans-serif;
     color: #eee;
-    overflow-x: hidden;
-    background: #111;
+    background: #0d0d0d;
+    overflow: hidden;
+    position: relative;
   }
 
-  /* Animated 3D background shapes */
-  body::before, body::after {
-    content: "";
+  canvas {
     position: fixed;
-    top: -50%;
-    left: -50%;
-    width: 200%;
-    height: 200%;
-    background: radial-gradient(circle at center, rgba(255,255,255,0.05), transparent 70%);
-    z-index: -2;
-    animation: rotateBG 60s linear infinite;
+    top: 0;
+    left: 0;
+    z-index: -1;
   }
 
-  body::after {
-    background: radial-gradient(circle at center, rgba(255,255,255,0.03), transparent 70%);
-    animation-duration: 120s;
-  }
-
-  @keyframes rotateBG {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-  }
-
-  /* Header */
   header {
     background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
     padding: 18px 0;
@@ -47,17 +30,14 @@
     letter-spacing: 1px;
     color: #fff;
     text-shadow: 0 2px 5px rgba(0,0,0,0.6);
-    box-shadow: 0 4px 20px rgba(0,0,0,0.5);
   }
 
-  /* Screens */
   .screen { display: none; padding: 20px; text-align: center; }
   .active { display: block; animation: fadeIn 0.5s ease; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity:1; transform: translateY(0); } }
 
   h2 { margin-bottom: 20px; }
 
-  /* Buttons */
   .btn {
     display: block;
     margin: 14px auto;
@@ -70,15 +50,14 @@
     color: #fff;
     cursor: pointer;
     text-align: center;
-    box-shadow: 0 8px 15px rgba(0,0,0,0.3);
-    transition: all 0.3s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
   }
+  .btn:hover { transform: scale(1.05); box-shadow: 0 6px 14px rgba(0,0,0,0.6); }
 
-  .btn:hover { transform: translateY(-3px) scale(1.02); box-shadow: 0 12px 20px rgba(0,0,0,0.45); }
-
-  .plan-basic { background: linear-gradient(135deg,#1abc9c,#16a085); }
-  .plan-plus { background: linear-gradient(135deg,#3498db,#2980b9); }
-  .plan-elite { background: linear-gradient(135deg,#9b59b6,#8e44ad); }
+  .plan-basic { background: #28a745; }
+  .plan-plus { background: #ff9800; }
+  .plan-elite { background: #9c27b0; }
 
   .gpay { background: #4285F4; }
   .phonepe { background: #6823FD; }
@@ -93,35 +72,33 @@
     border: none;
     border-radius: 10px;
     cursor: pointer;
-    box-shadow: 0 6px 12px rgba(0,0,0,0.4);
   }
 
   .qr-container { margin-top: 20px; }
-
   #upiId {
     font-weight: bold;
     font-size: 18px;
     margin-top: 10px;
     color: #fff;
   }
-
 </style>
 </head>
 <body>
 
+<canvas id="bubbles"></canvas>
+
 <header>💸 EazeEarn Payments</header>
 
-<!-- Screen 1: Plan Selection -->
+<!-- Screens -->
 <div class="screen active" id="planScreen">
-  <h2>Select Your Plan</h2>
+  <h2>Choose Your Plan</h2>
   <button class="btn plan-basic" onclick="selectPlan('Basic',1499)">Basic – ₹1499</button>
   <button class="btn plan-plus" onclick="selectPlan('Plus',4499)">Plus – ₹4499</button>
   <button class="btn plan-elite" onclick="selectPlan('Elite',9500)">Elite – ₹9500</button>
 </div>
 
-<!-- Screen 2: App Selection -->
 <div class="screen" id="appScreen">
-  <h2>Choose UPI App</h2>
+  <h2>Select UPI App</h2>
   <button class="btn gpay" onclick="payNow('gpay')">Google Pay</button>
   <button class="btn phonepe" onclick="payNow('phonepe')">PhonePe</button>
   <button class="btn paytm" onclick="payNow('paytm')">Paytm</button>
@@ -130,10 +107,9 @@
   <button class="back-btn" onclick="goBack()">⬅ Back</button>
 </div>
 
-<!-- Screen 3: QR Fallback -->
 <div class="screen" id="qrScreen">
   <h2>Scan & Pay</h2>
-  <p>If your UPI app didn’t open, scan this QR code:</p>
+  <p>If the UPI app didn’t open, scan this QR code:</p>
   <div class="qr-container">
     <img id="qrCode" src="" alt="UPI QR Code" width="220"/>
   </div>
@@ -144,56 +120,100 @@
 </div>
 
 <script>
-  let selectedPlan = { name: "Basic", amount: 1499 };
-  const upiID = "8287978793@ptyes";
-  const payee = "DeepJadaun";
+/* ---------- Bubble Animation ---------- */
+const canvas = document.getElementById('bubbles');
+const ctx = canvas.getContext('2d');
+let width = canvas.width = window.innerWidth;
+let height = canvas.height = window.innerHeight;
 
-  function selectPlan(name, amount) {
-    selectedPlan = { name, amount };
-    document.getElementById("planScreen").classList.remove("active");
-    document.getElementById("appScreen").classList.add("active");
+window.addEventListener('resize', () => {
+  width = canvas.width = window.innerWidth;
+  height = canvas.height = window.innerHeight;
+});
+
+class Bubble {
+  constructor() {
+    this.radius = Math.random() * 20 + 10;
+    this.x = Math.random() * width;
+    this.y = Math.random() * height;
+    this.vx = (Math.random() - 0.5) * 1.5;
+    this.vy = (Math.random() - 0.5) * 1.5;
+    this.color = `rgba(255,255,255,${Math.random()*0.3 + 0.1})`;
   }
-
-  function goBack() {
-    document.getElementById("appScreen").classList.remove("active");
-    document.getElementById("planScreen").classList.add("active");
+  draw() {
+    ctx.beginPath();
+    ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
+    ctx.fillStyle = this.color;
+    ctx.fill();
   }
-
-  function goBackToApps() {
-    document.getElementById("qrScreen").classList.remove("active");
-    document.getElementById("appScreen").classList.add("active");
+  update() {
+    this.x += this.vx;
+    this.y += this.vy;
+    if(this.x + this.radius > width) { this.x = width - this.radius; this.vx *= -1; }
+    if(this.x - this.radius < 0) { this.x = this.radius; this.vx *= -1; }
+    if(this.y + this.radius > height) { this.y = height - this.radius; this.vy *= -1; }
+    if(this.y - this.radius < 0) { this.y = this.radius; this.vy *= -1; }
+    this.draw();
   }
+}
 
-  function payNow(app) {
-    const amount = selectedPlan.amount;
-    const note = selectedPlan.name + " Activation";
-    let link = "";
+let bubbles = [];
+for(let i=0;i<30;i++) bubbles.push(new Bubble());
 
-    if(app === "gpay") link = `tez://upi/pay?pa=${upiID}&pn=${payee}&am=${amount}&cu=INR&tn=${note}`;
-    else if(app === "phonepe") link = `phonepe://upi/pay?pa=${upiID}&pn=${payee}&am=${amount}&cu=INR&tn=${note}`;
-    else if(app === "paytm") link = `paytm://upi/pay?pa=${upiID}&pn=${payee}&am=${amount}&cu=INR&tn=${note}`;
-    else link = `upi://pay?pa=${upiID}&pn=${payee}&am=${amount}&cu=INR&tn=${note}`;
+function animate() {
+  ctx.clearRect(0,0,width,height);
+  bubbles.forEach(b => b.update());
+  requestAnimationFrame(animate);
+}
+animate();
 
-    window.location.href = link;
+/* ---------- Screens & Payments ---------- */
+let selectedPlan = { name: "Basic", amount: 1499 };
+const upiID = "8287978793@ptyes";
+const payee = "DeepJadaun";
 
-    // Fallback QR
-    setTimeout(() => { showQR(link); }, 1500);
-  }
+function selectPlan(name, amount) {
+  selectedPlan = { name, amount };
+  document.getElementById("planScreen").classList.remove("active");
+  document.getElementById("appScreen").classList.add("active");
+}
 
-  function showQR(link) {
-    document.getElementById("appScreen").classList.remove("active");
-    document.getElementById("qrScreen").classList.add("active");
+function goBack() {
+  document.getElementById("appScreen").classList.remove("active");
+  document.getElementById("planScreen").classList.add("active");
+}
 
-    const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(link)}`;
-    document.getElementById("qrCode").src = qrApi;
-    document.getElementById("upiId").innerText = upiID;
-  }
+function goBackToApps() {
+  document.getElementById("qrScreen").classList.remove("active");
+  document.getElementById("appScreen").classList.add("active");
+}
 
-  function copyUpi() {
-    navigator.clipboard.writeText(upiID).then(() => {
-      alert("✅ UPI ID copied to clipboard!");
-    });
-  }
+function payNow(app) {
+  const amount = selectedPlan.amount;
+  const note = selectedPlan.name + " Activation";
+  let link = "";
+
+  if(app === "gpay") link = `tez://upi/pay?pa=${upiID}&pn=${payee}&am=${amount}&cu=INR&tn=${note}`;
+  else if(app === "phonepe") link = `phonepe://upi/pay?pa=${upiID}&pn=${payee}&am=${amount}&cu=INR&tn=${note}`;
+  else if(app === "paytm") link = `paytm://upi/pay?pa=${upiID}&pn=${payee}&am=${amount}&cu=INR&tn=${note}`;
+  else link = `upi://pay?pa=${upiID}&pn=${payee}&am=${amount}&cu=INR&tn=${note}`;
+
+  window.location.href = link;
+  setTimeout(() => { showQR(link); }, 1500);
+}
+
+function showQR(link) {
+  document.getElementById("appScreen").classList.remove("active");
+  document.getElementById("qrScreen").classList.add("active");
+
+  const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(link)}`;
+  document.getElementById("qrCode").src = qrApi;
+  document.getElementById("upiId").innerText = upiID;
+}
+
+function copyUpi() {
+  navigator.clipboard.writeText(upiID).then(() => { alert("✅ UPI ID copied to clipboard!"); });
+}
 </script>
 
 </body>
