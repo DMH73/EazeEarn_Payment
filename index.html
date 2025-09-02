@@ -5,82 +5,136 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>💸 EazeEarn Payments</title>
 <style>
-  body {
-    margin: 0;
-    font-family: "Segoe UI", Arial, sans-serif;
-    color: #eee;
-    background: #0d0d0d;
-    overflow: hidden;
-    position: relative;
-  }
+/* ---------- General Body & Canvas ---------- */
+body {
+  margin: 0;
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: #eee;
+  background: #0d0d0d;
+  overflow: hidden;
+  position: relative;
+}
 
-  canvas {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: -1;
-  }
+canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+}
 
-  header {
-    background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
-    padding: 18px 0;
-    text-align: center;
-    font-size: 22px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    color: #fff;
-    text-shadow: 0 2px 5px rgba(0,0,0,0.6);
-  }
+/* ---------- Header ---------- */
+header {
+  background: linear-gradient(135deg, #0f0f0f, #1c1c1c);
+  padding: 18px 0;
+  text-align: center;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 1px;
+  color: #fff;
+  text-shadow: 0 2px 5px rgba(0,0,0,0.6);
+}
 
-  .screen { display: none; padding: 20px; text-align: center; }
-  .active { display: block; animation: fadeIn 0.5s ease; }
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity:1; transform: translateY(0); } }
+/* ---------- Screens ---------- */
+.screen { 
+  display: none; 
+  padding: 20px; 
+  text-align: center; 
+}
+.active { 
+  display: block; 
+  animation: fadeIn 0.5s ease; 
+}
+@keyframes fadeIn { 
+  from { opacity: 0; transform: translateY(15px); } 
+  to { opacity:1; transform: translateY(0); } 
+}
 
-  h2 { margin-bottom: 20px; }
+h2 { margin-bottom: 20px; }
 
-  .btn {
-    display: block;
-    margin: 14px auto;
-    padding: 16px;
-    border: none;
-    border-radius: 12px;
-    font-size: 18px;
-    width: 85%;
-    max-width: 320px;
-    color: #fff;
-    cursor: pointer;
-    text-align: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.4);
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  .btn:hover { transform: scale(1.05); box-shadow: 0 6px 14px rgba(0,0,0,0.6); }
+/* ---------- Premium Button Styles ---------- */
+.btn {
+  display: block;
+  margin: 16px auto;
+  padding: 18px 0;
+  width: 85%;
+  max-width: 320px;
+  font-size: 18px;
+  font-weight: 600;
+  text-align: center;
+  color: #fff;
+  border: none;
+  border-radius: 20px;
+  cursor: pointer;
+  position: relative;
+  background: linear-gradient(145deg, rgba(255,255,255,0.05), rgba(255,255,255,0.1));
+  backdrop-filter: blur(6px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.6), 0 0 15px rgba(255,255,255,0.05) inset;
+  transition: all 0.3s ease;
+}
 
-  .plan-basic { background: #28a745; }
-  .plan-plus { background: #ff9800; }
-  .plan-elite { background: #9c27b0; }
+.btn::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  border-radius: 20px;
+  padding: 2px;
+  background: linear-gradient(120deg, #ff9a9e, #fad0c4, #a18cd1, #fbc2eb);
+  background-size: 300% 300%;
+  animation: gradientAnim 6s ease infinite;
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: destination-out;
+          mask-composite: exclude;
+  pointer-events: none;
+}
 
-  .gpay { background: #4285F4; }
-  .phonepe { background: #6823FD; }
-  .paytm { background: #002970; }
-  .whatsapp { background: #25D366; }
+@keyframes gradientAnim {
+  0%{background-position:0% 50%;}
+  50%{background-position:100% 50%;}
+  100%{background-position:0% 50%;}
+}
 
-  .back-btn {
-    margin-top: 20px;
-    background: #555;
-    color: white;
-    padding: 12px 25px;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-  }
+.btn:hover {
+  transform: scale(1.08);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.7), 0 0 20px rgba(255,255,255,0.08) inset;
+}
 
-  .qr-container { margin-top: 20px; }
-  #upiId {
-    font-weight: bold;
-    font-size: 18px;
-    margin-top: 10px;
-    color: #fff;
-  }
+/* ---------- Specific Plan Gradients ---------- */
+.plan-basic { background: linear-gradient(145deg, #1b2a49, #2a3c6a); }
+.plan-plus  { background: linear-gradient(145deg, #42275a, #734b6d); }
+.plan-elite { background: linear-gradient(145deg, #0f1c2f, #20344b); }
+
+/* ---------- Payment App Buttons ---------- */
+.gpay    { background: linear-gradient(145deg, #3367D6, #4285F4); }
+.phonepe { background: linear-gradient(145deg, #4A00E0, #6823FD); }
+.paytm   { background: linear-gradient(145deg, #001F4D, #002970); }
+.whatsapp{ background: linear-gradient(145deg, #128C7E, #25D366); }
+
+/* ---------- Back Button ---------- */
+.back-btn {
+  margin-top: 20px;
+  background: linear-gradient(145deg, rgba(255,255,255,0.08), rgba(255,255,255,0.12));
+  color: #fff;
+  padding: 14px 30px;
+  border: none;
+  border-radius: 18px;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.6), 0 0 10px rgba(255,255,255,0.05) inset;
+  transition: all 0.3s ease;
+}
+
+.back-btn:hover {
+  transform: scale(1.06);
+  box-shadow: 0 10px 28px rgba(0,0,0,0.7), 0 0 18px rgba(255,255,255,0.08) inset;
+}
+
+/* ---------- QR & UPI ---------- */
+.qr-container { margin-top: 20px; }
+#upiId {
+  font-weight: bold;
+  font-size: 18px;
+  margin-top: 10px;
+  color: #fff;
+}
 </style>
 </head>
 <body>
@@ -133,12 +187,12 @@ window.addEventListener('resize', () => {
 
 class Bubble {
   constructor() {
-    this.radius = Math.random() * 20 + 10;
+    this.radius = Math.random() * 20 + 15; // bigger bubbles
     this.x = Math.random() * width;
     this.y = Math.random() * height;
-    this.vx = (Math.random() - 0.5) * 1.5;
-    this.vy = (Math.random() - 0.5) * 1.5;
-    this.color = `rgba(255,255,255,${Math.random()*0.3 + 0.1})`;
+    this.vx = (Math.random() - 0.5) * 1.2;
+    this.vy = (Math.random() - 0.5) * 1.2;
+    this.color = `rgba(255,255,255,${Math.random()*0.25 + 0.05})`;
   }
   draw() {
     ctx.beginPath();
@@ -149,16 +203,23 @@ class Bubble {
   update() {
     this.x += this.vx;
     this.y += this.vy;
+
+    // bounce from walls
     if(this.x + this.radius > width) { this.x = width - this.radius; this.vx *= -1; }
     if(this.x - this.radius < 0) { this.x = this.radius; this.vx *= -1; }
     if(this.y + this.radius > height) { this.y = height - this.radius; this.vy *= -1; }
     if(this.y - this.radius < 0) { this.y = this.radius; this.vy *= -1; }
+
     this.draw();
   }
 }
 
 let bubbles = [];
-for(let i=0;i<30;i++) bubbles.push(new Bubble());
+for(let i=0;i<25;i++){
+  let b = new Bubble();
+  b.radius = Math.random()*40+20;
+  bubbles.push(b);
+}
 
 function animate() {
   ctx.clearRect(0,0,width,height);
@@ -199,22 +260,20 @@ function payNow(app) {
   else link = `upi://pay?pa=${upiID}&pn=${payee}&am=${amount}&cu=INR&tn=${note}`;
 
   window.location.href = link;
-  setTimeout(() => { showQR(link); }, 1500);
+  setTimeout(()=>{ showQR(link); },1500);
 }
 
 function showQR(link) {
   document.getElementById("appScreen").classList.remove("active");
   document.getElementById("qrScreen").classList.add("active");
-
   const qrApi = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${encodeURIComponent(link)}`;
   document.getElementById("qrCode").src = qrApi;
   document.getElementById("upiId").innerText = upiID;
 }
 
 function copyUpi() {
-  navigator.clipboard.writeText(upiID).then(() => { alert("✅ UPI ID copied to clipboard!"); });
+  navigator.clipboard.writeText(upiID).then(()=>{ alert("✅ UPI ID copied!"); });
 }
 </script>
-
 </body>
 </html>
